@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Parking System</title>
+
+<style>
+   body {
+    font-family: 'Segoe UI';
+    background: linear-gradient(to right, #232526, #414345);
+    text-align: center;
+    color: rgb(0, 0, 0);
+}
+
+    h1 {
+        color: white;
+        margin-top: 20px;
+    }
+
+    .container {
+        background: white;
+        width: 50%;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(219, 215, 215, 0.2);
+    }
+
+    input, button {
+        padding: 8px;
+        margin: 5px;
+    }
+
+    button {
+        background: #11998e;
+        color: rgb(5, 5, 5);
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .car {
+        padding: 10px;
+        margin: 5px;
+        background: #000000;
+        border-radius: 5px;
+        text-align: left;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>🚗 Smart Parking Management System</h1>
+
+<div class="container">
+
+    <input type="text" id="carNumber" placeholder="Enter Car Number">
+    <br>
+
+    <button onclick="enterCar()">Enter Parking</button>
+    <button onclick="exitCar()">Exit Parking</button>
+    <button onclick="displayCars()">Show Parking</button>
+
+    <div id="output"></div>
+
+</div>
+
+<script>
+
+// Queue (Parking)
+let parkingQueue = [];
+let capacity = 5;
+
+// Enter Car
+function enterCar() {
+    let carNo = document.getElementById("carNumber").value;
+
+    if (!carNo) {
+        alert("Enter car number!");
+        return;
+    }
+
+    if (parkingQueue.length >= capacity) {
+        alert("🚫 Parking Full!");
+        return;
+    }
+
+    let entryTime = new Date();
+
+    let car = {
+        number: carNo,
+        entry: entryTime,
+        slot: parkingQueue.length + 1
+    };
+
+    parkingQueue.push(car);
+
+    document.getElementById("output").innerHTML =
+        "✅ Car Parked in Slot " + car.slot;
+
+    document.getElementById("carNumber").value = "";
+}
+
+// Exit Car
+function exitCar() {
+    if (parkingQueue.length === 0) {
+        alert("🚫 No Cars in Parking!");
+        return;
+    }
+
+    let car = parkingQueue.shift(); // FIFO
+    let exitTime = new Date();
+
+    let duration = (exitTime - car.entry) / 1000; // seconds
+
+    document.getElementById("output").innerHTML = `
+        🚗 Car ${car.number} exited <br>
+        🕒 Entry: ${car.entry.toLocaleTimeString()} <br>
+        🕒 Exit: ${exitTime.toLocaleTimeString()} <br>
+        ⏱ Duration: ${duration.toFixed(2)} seconds
+    `;
+}
+
+// Display Cars
+function displayCars() {
+    let output = "<h3>📋 Parked Cars</h3>";
+
+    parkingQueue.forEach(car => {
+        output += `
+            <div class="car">
+                🚗 ${car.number} <br>
+                Slot: ${car.slot} <br>
+                Entry: ${car.entry.toLocaleTimeString()}
+            </div>
+        `;
+    });
+
+    document.getElementById("output").innerHTML = output;
+}
+
+</script>
+
+</body>
+</html>
